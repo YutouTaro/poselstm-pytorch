@@ -6,6 +6,7 @@ from models.models import create_model
 from util.visualizer import Visualizer
 from util import html
 import numpy
+import datetime
 
 opt = TestOptions().parse()
 opt.nThreads = 1   # test code only supports nThreads = 1
@@ -19,6 +20,7 @@ dataset = data_loader.load_data()
 results_dir = os.path.join(opt.results_dir, opt.name)
 if not os.path.exists(results_dir):
     os.makedirs(results_dir)
+    print("Results directory %s created." % results_dir)
 
 besterror  = [0, float('inf'), float('inf')] # nepoch, medX, medQ
 if opt.model == 'posenet':
@@ -27,7 +29,8 @@ else:
     testepochs = numpy.arange(450, 1200+1, 5)
 
 testfile = open(os.path.join(results_dir, 'test_median.txt'), 'a')
-testfile.write('epoch medX  medQ\n')
+testfile.write(datetime.datetime.now().strftime("%y%m%d-%H%M%S"))
+testfile.write('epoch\tmedX\tmedQ\n')
 testfile.write('==================\n')
 
 model = create_model(opt)
@@ -45,7 +48,7 @@ for testepoch in testepochs:
         model.set_input(data)
         model.test()
         img_path = model.get_image_paths()[0]
-        print('\t%04d/%04d: process image... %s' % (i, len(dataset), img_path), end='\r')
+        print('\t%04d/%04d: processing image %s' % (i+1, len(dataset), img_path), end='\r')
         image_path = img_path.split('/')[-2] + '/' + img_path.split('/')[-1]
         pose = model.get_current_pose()
         visualizer.save_estimated_pose(image_path, pose)
@@ -65,6 +68,7 @@ for testepoch in testepochs:
                                                      median_pos[0],
                                                      median_pos[1]))
     testfile.flush()
+print("Best epoch:\nepoch\tmedX\tmedQ")
 print("{0:<5} {1:.2f}m {2:.2f}°\n".format(*besterror))
 testfile.write('-----------------\n')
 testfile.write("{0:<5} {1:.2f}m {2:.2f}°\n".format(*besterror))
