@@ -29,7 +29,7 @@ else:
     testepochs = numpy.arange(450, 1200+1, 5)
 
 testfile = open(os.path.join(results_dir, 'test_median.txt'), 'a')
-testfile.write(datetime.datetime.now().strftime("%y%m%d-%H%M%S"))
+testfile.write(datetime.datetime.now().strftime("%y%m%d-%H%M%S\n"))
 testfile.write('epoch\tmedX\tmedQ\n')
 testfile.write('==================\n')
 
