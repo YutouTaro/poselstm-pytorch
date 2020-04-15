@@ -1,7 +1,7 @@
 
 def create_model(opt):
     model = None
-    print(opt.model)
+    print("Network model:" + opt.model)
     if opt.model == 'posenet':
         from .posenet_model import PoseNetModel
         model = PoseNetModel()
