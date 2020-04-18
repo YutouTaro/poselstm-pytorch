@@ -45,6 +45,10 @@ for testepoch in testepochs:
     err = []
     print("epoch: "+ str(testepoch))
     for i, data in enumerate(dataset):
+        # data includes:
+        # (tensor)      'A': the image
+        # (tensor)      'B': pose
+        # (string)      'A_paths' path of the image file
         model.set_input(data)
         model.test()
         img_path = model.get_image_paths()[0]
