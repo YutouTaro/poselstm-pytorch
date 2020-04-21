@@ -40,7 +40,7 @@ class BaseModel():
 
     # helper saving function that can be used by subclasses
     def save_network(self, network, network_label, epoch_label, gpu_ids):
-        if epoch_label.isdigit():
+        if str(epoch_label).isdigit():
             save_filename = '%03d_net_%s.pth' % (int(epoch_label), network_label)
         else:
             save_filename = '%s_net_%s.pth' % (epoch_label, network_label)
