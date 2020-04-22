@@ -26,7 +26,8 @@ besterror  = [0, float('inf'), float('inf')] # nepoch, medX, medQ
 if opt.model == 'posenet':
     testepochs = numpy.arange(450, 500+1, 5)
 else:
-    testepochs = numpy.arange(450, 1200+1, 5)
+	testepochs = numpy.arange(450, 500+1, 5)
+    # testepochs = numpy.arange(450, 1200+1, 5)
 
 testfile = open(os.path.join(results_dir, 'test_median.txt'), 'a')
 testfile.write(datetime.datetime.now().strftime("%y%m%d-%H%M%S\n"))
