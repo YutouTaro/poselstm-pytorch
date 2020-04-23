@@ -22,7 +22,8 @@ if not os.path.exists(path_infile):
     print("%s does not exists." % (path_infile))
     sys.exit()
 
-path_outfile = os.path.join("./", os.path.basename(path_infile))
+outfileName = os.path.dirname(path_infile).split('/')[-1] + '_' + os.path.basename(path_infile)
+path_outfile = os.path.join("./", outfileName)
 
 
 fin = open(path_infile, 'r')
@@ -35,7 +36,7 @@ for line in fin:
     deci = len(timestampStr) - 10
     timestamp = int(timestampStr) / math.pow(10, deci)
 
-    fout.write("%10.6f %s" % (timestamp, poseStr))
+    fout.write("%10.6f %s\n" % (timestamp, poseStr.strip()))
     ctLine += 1
 fin.close()
 fout.close()
