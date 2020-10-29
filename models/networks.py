@@ -322,7 +322,7 @@ class FCNLSTM(nn.Module):
         )
 
     def __init__(self, input_nc, lstm_hidden_size, weights=None, isTest=False,  gpu_ids=[], n_class=21):
-        super(FCNLSTM, self).__init__(input_nc, weights, isTest, gpu_ids)
+        super(FCNLSTM, self).__init__()#input_nc, lstm_hidden_size, weights=None, isTest=False,  gpu_ids=[], n_class=21)
         # conv1
         self.conv1_1 = nn.Conv2d(3, 64, 3, padding=100)
         self.relu1_1 = nn.ReLU(inplace=True)

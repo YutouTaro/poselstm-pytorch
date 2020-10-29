@@ -19,7 +19,7 @@ class BaseOptions():
         self.parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         self.parser.add_argument('--name', type=str, default='experiment_name', help='name of the experiment. It decides where to store samples and models')
         self.parser.add_argument('--dataset_mode', type=str, default='unaligned_posenet', help='chooses how datasets are loaded. [unaligned | aligned | single]')
-        self.parser.add_argument('--model', type=str, default='posenet', help='chooses which model to use. [posenet | poselstm]')
+        self.parser.add_argument('--model', type=str, default='posenet', choices=['posenet', 'poselstm', 'fcnlstm'], help='chooses which model to use. [posenet | poselstm]')
         self.parser.add_argument('--nThreads', default=8, type=int, help='# threads for loading data')
         self.parser.add_argument('--checkpoints_dir', type=str, default='./checkpoints', help='models are saved here')
         self.parser.add_argument('--serial_batches', action='store_true', help='if true, takes images in order to make batches, otherwise takes them randomly')
