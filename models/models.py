@@ -8,6 +8,9 @@ def create_model(opt):
     elif opt.model == 'poselstm':
         from .poselstm_model import PoseLSTModel
         model = PoseLSTModel()
+    elif opt.model == 'fcnlstm':
+        from .fcnlstm_model import FCNLSTModel
+        model = FCNLSTModel()
     else:
         raise ValueError("Model [%s] not recognized." % opt.model)
     model.initialize(opt)
