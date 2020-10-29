@@ -323,6 +323,10 @@ class FCNLSTM(nn.Module):
 
     def __init__(self, input_nc, lstm_hidden_size, weights=None, isTest=False,  gpu_ids=[], n_class=21):
         super(FCNLSTM, self).__init__()#input_nc, lstm_hidden_size, weights=None, isTest=False,  gpu_ids=[], n_class=21)
+        self.n_class = n_class
+        self.gpu_ids = gpu_ids
+        self.isTest = isTest
+
         # conv1
         self.conv1_1 = nn.Conv2d(3, 64, 3, padding=100)
         self.relu1_1 = nn.ReLU(inplace=True)
@@ -374,16 +378,16 @@ class FCNLSTM(nn.Module):
         self.relu7 = nn.ReLU(inplace=True)
         self.drop7 = nn.Dropout2d()
 
-        self.score_fr = nn.Conv2d(4096, n_class, 1)
-        self.score_pool3 = nn.Conv2d(256, n_class, 1)
-        self.score_pool4 = nn.Conv2d(512, n_class, 1)
+        self.score_fr = nn.Conv2d(4096, self.n_class, 1)
+        self.score_pool3 = nn.Conv2d(256, self.n_class, 1)
+        self.score_pool4 = nn.Conv2d(512, self.n_class, 1)
 
         self.upscore2 = nn.ConvTranspose2d(
-            n_class, n_class, 4, stride=2, bias=False)
+            self.n_class, self.n_class, 4, stride=2, bias=False)
         self.upscore8 = nn.ConvTranspose2d(
-            n_class, n_class, 16, stride=8, bias=False)
+            self.n_class, self.n_class, 16, stride=8, bias=False)
         self.upscore_pool4 = nn.ConvTranspose2d(
-            n_class, n_class, 4, stride=2, bias=False)
+            self.n_class, self.n_class, 4, stride=2, bias=False)
 
         self.cls1_fc = RegressionHead_FCN(lossID="inception_3b/1x1", weights=weights, lstm_hidden_size=lstm_hidden_size)
         self.cls2_fc = RegressionHead_FCN(lossID="loss1/conv", weights=weights, lstm_hidden_size=lstm_hidden_size)
