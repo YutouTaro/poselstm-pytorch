@@ -38,7 +38,7 @@ class FCNLSTModel(BaseModel):
             except RuntimeError:
                 fcn16s_weights.load_state_dict(state_dict['model_state_dict'])
 
-            print('initializing the weights from '+ opt.init_weights + 'and ' + opt.pretrained_model)
+            print('initializing the weights from '+ opt.init_weights + ' and ' + opt.pretrained_model)
         self.mean_image = np.load(os.path.join(opt.dataroot , 'mean_image.npy'))
 
         self.netG = networks.define_network(opt.input_nc, opt.lstm_hidden_size, opt.model,
