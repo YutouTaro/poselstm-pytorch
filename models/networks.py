@@ -153,7 +153,7 @@ class RegressionHead_FCN(nn.Module):
                                               nn.ReLU(inplace=True)])
             self.cls_fc_pose = nn.Sequential(*[
                                             #  weight_init_googlenet(lossID+"/fc", nn.Linear(2048, 1024), weights),
-                                               nn.Linear(num_fc_features[lossID],1024),
+                                               weight_init_googlenet('LSTM',nn.Linear(num_fc_features[lossID],1024)),
                                                nn.ReLU(inplace=True)])
             self.cls_fc_xy = weight_init_googlenet("XYZ", nn.Linear(nc_cls[0], 3))
             self.cls_fc_wpqr = weight_init_googlenet("WPQR", nn.Linear(nc_cls[0], 4))
