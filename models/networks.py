@@ -61,7 +61,7 @@ def define_network(input_nc, lstm_hidden_size, model, init_from=None, isTest=Fal
     elif model == 'poselstm':
         netG = PoseLSTM(input_nc, lstm_hidden_size, weights=init_from, isTest=isTest, gpu_ids=gpu_ids)
     elif model == 'fcnlstm':
-        netG = FCNLSTM(input_nc, lstm_hidden_size, weights=init_from, isTest=isTest, gpu_ids=gpu_ids)
+        netG = FCNLSTM(input_nc, lstm_hidden_size, weights=init_from[0], weight_fcn=init_from[1], isTest=isTest, gpu_ids=gpu_ids)
     else:
         raise NotImplementedError('Model name [%s] is not recognized' % model)
     if len(gpu_ids) > 0:
@@ -394,12 +394,12 @@ class FCNLSTM(nn.Module):
             md5='dbd9bbb3829a3184913bccc74373afbb',
         )
 
-    def __init__(self, input_nc, lstm_hidden_size, weights=None, isTest=False,  gpu_ids=[], n_class=21):
+    def __init__(self, input_nc, lstm_hidden_size, weights=None, weight_fcn=None, isTest=False,  gpu_ids=[], n_class=21):
         super(FCNLSTM, self).__init__()#input_nc, lstm_hidden_size, weights=None, isTest=False,  gpu_ids=[], n_class=21)
         self.n_class = n_class
         self.gpu_ids = gpu_ids
         self.isTest = isTest
-        self.weight_fcn16s = weights[1]
+        self.weight_fcn16s = weight_fcn
 
         # conv1
         self.conv1_1 = nn.Conv2d(3, 64, 3, padding=100)
