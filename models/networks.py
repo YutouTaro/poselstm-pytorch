@@ -393,6 +393,8 @@ class FCNLSTM(nn.Module):
         self.cls2_fc = RegressionHead_FCN(lossID="loss1/conv", weights=weights, lstm_hidden_size=lstm_hidden_size)
         self.cls3_fc = RegressionHead_FCN(lossID="loss3/conv", weights=weights, lstm_hidden_size=lstm_hidden_size)
 
+        if self.isTest:
+            self.model.eval() # ensure Dropout is deactivated during test
         self._initialize_weights()
 
     def _initialize_weights(self):
