@@ -49,7 +49,6 @@ def get_scheduler(optimizer, opt):
         return NotImplementedError('learning rate policy [%s] is not implemented', opt.lr_policy)
     return scheduler
 
-
 def define_network(input_nc, lstm_hidden_size, model, init_from=None, isTest=False, gpu_ids=[]):
     netG = None
     use_gpu = len(gpu_ids) > 0
@@ -308,6 +307,80 @@ class PoseLSTM(PoseNet):
             if self.isTest:
                 self.model.eval() # ensure Dropout is deactivated during test
 
+class FCN16s(nn.Module):
+
+    pretrained_model = \
+        os.path.expanduser('~/data/models/pytorch/fcn16s_from_caffe.pth')
+
+    @classmethod
+    def download(cls):
+        return fcn.data.cached_download(
+            url='http://drive.google.com/uc?id=0B9P1L--7Wd2vVGE3TkRMbWlNRms',
+            path=cls.pretrained_model,
+            md5='991ea45d30d632a01e5ec48002cac617',
+        )
+
+    def __init__(self, n_class=21):
+        super(FCN16s, self).__init__()
+        # conv1
+        self.conv1_1 = nn.Conv2d(3, 64, 3, padding=100)
+        self.relu1_1 = nn.ReLU(inplace=True)
+        self.conv1_2 = nn.Conv2d(64, 64, 3, padding=1)
+        self.relu1_2 = nn.ReLU(inplace=True)
+        self.pool1 = nn.MaxPool2d(2, stride=2, ceil_mode=True)  # 1/2
+
+        # conv2
+        self.conv2_1 = nn.Conv2d(64, 128, 3, padding=1)
+        self.relu2_1 = nn.ReLU(inplace=True)
+        self.conv2_2 = nn.Conv2d(128, 128, 3, padding=1)
+        self.relu2_2 = nn.ReLU(inplace=True)
+        self.pool2 = nn.MaxPool2d(2, stride=2, ceil_mode=True)  # 1/4
+
+        # conv3
+        self.conv3_1 = nn.Conv2d(128, 256, 3, padding=1)
+        self.relu3_1 = nn.ReLU(inplace=True)
+        self.conv3_2 = nn.Conv2d(256, 256, 3, padding=1)
+        self.relu3_2 = nn.ReLU(inplace=True)
+        self.conv3_3 = nn.Conv2d(256, 256, 3, padding=1)
+        self.relu3_3 = nn.ReLU(inplace=True)
+        self.pool3 = nn.MaxPool2d(2, stride=2, ceil_mode=True)  # 1/8
+
+        # conv4
+        self.conv4_1 = nn.Conv2d(256, 512, 3, padding=1)
+        self.relu4_1 = nn.ReLU(inplace=True)
+        self.conv4_2 = nn.Conv2d(512, 512, 3, padding=1)
+        self.relu4_2 = nn.ReLU(inplace=True)
+        self.conv4_3 = nn.Conv2d(512, 512, 3, padding=1)
+        self.relu4_3 = nn.ReLU(inplace=True)
+        self.pool4 = nn.MaxPool2d(2, stride=2, ceil_mode=True)  # 1/16
+
+        # conv5
+        self.conv5_1 = nn.Conv2d(512, 512, 3, padding=1)
+        self.relu5_1 = nn.ReLU(inplace=True)
+        self.conv5_2 = nn.Conv2d(512, 512, 3, padding=1)
+        self.relu5_2 = nn.ReLU(inplace=True)
+        self.conv5_3 = nn.Conv2d(512, 512, 3, padding=1)
+        self.relu5_3 = nn.ReLU(inplace=True)
+        self.pool5 = nn.MaxPool2d(2, stride=2, ceil_mode=True)  # 1/32
+
+        # fc6
+        self.fc6 = nn.Conv2d(512, 4096, 7)
+        self.relu6 = nn.ReLU(inplace=True)
+        self.drop6 = nn.Dropout2d()
+
+        # fc7
+        self.fc7 = nn.Conv2d(4096, 4096, 1)
+        self.relu7 = nn.ReLU(inplace=True)
+        self.drop7 = nn.Dropout2d()
+
+        self.score_fr = nn.Conv2d(4096, n_class, 1)
+        self.score_pool4 = nn.Conv2d(512, n_class, 1)
+
+        self.upscore2 = nn.ConvTranspose2d(
+            n_class, n_class, 4, stride=2, bias=False)
+        self.upscore16 = nn.ConvTranspose2d(
+            n_class, n_class, 32, stride=16, bias=False)
+
 class FCNLSTM(nn.Module):
 
     pretrained_model = \
@@ -326,6 +399,7 @@ class FCNLSTM(nn.Module):
         self.n_class = n_class
         self.gpu_ids = gpu_ids
         self.isTest = isTest
+        self.weight_fcn16s = weights[1]
 
         # conv1
         self.conv1_1 = nn.Conv2d(3, 64, 3, padding=100)
@@ -398,16 +472,39 @@ class FCNLSTM(nn.Module):
         self._initialize_weights()
 
     def _initialize_weights(self):
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                m.weight.data.zero_()
-                if m.bias is not None:
-                    m.bias.data.zero_()
-            if isinstance(m, nn.ConvTranspose2d):
-                assert m.kernel_size[0] == m.kernel_size[1]
-                initial_weight = get_upsampling_weight(
-                    m.in_channels, m.out_channels, m.kernel_size[0])
-                m.weight.data.copy_(initial_weight)
+        # for m in self.modules():
+        #     if isinstance(m, nn.Conv2d):
+        #         m.weight.data.zero_()
+        #         if m.bias is not None:
+        #             m.bias.data.zero_()
+        #     if isinstance(m, nn.ConvTranspose2d):
+        #         assert m.kernel_size[0] == m.kernel_size[1]
+        #         initial_weight = get_upsampling_weight(
+        #             m.in_channels, m.out_channels, m.kernel_size[0])
+        #         m.weight.data.copy_(initial_weight)
+        for name, l2 in self.named_children():
+            if hasattr(self.weight_fcn16s, name):
+                # print('[debug]{}'.format(name), end='')
+                l1 = getattr(self.weight_fcn16s, name)
+                if hasattr(l1, 'weight'):  # '[Error]{} in the pretrained model does not have weight!'.format(name)
+                    assert l1.weight.size() == l2.weight.size(), '[Error]The size of {}.weight does not match with the pretrained model!'.format(
+                        name)
+                    l2.weight.data.copy_(l1.weight.data)
+                    # print(' loaded weight', end='')
+                    if l1.bias is not None:
+                        assert l1.bias.size() == l2.bias.size(), '[Error]The size of {}.bias does not match with the pretrained model!'.format(
+                            name)
+                        l2.bias.data.copy_(l1.bias.data)
+                        # print(' and bias', end='')
+                # print()
+            else:
+                print("[debug]{}, {}".format(name, type(l2)))
+                if isinstance(l2, torch.nn.Conv2d) or isinstance(l2, torch.nn.ConvTranspose2d):
+                    for para_name, param in l2.named_parameters():
+                        if 'bias' in para_name:
+                            torch.nn.init.constant_(param, 0.0)
+                        elif 'weight' in para_name:
+                            torch.nn.init.xavier_normal_(param)
 
     def forward(self, x):
         output1_1 = self.relu1_1(self.conv1_1(x))

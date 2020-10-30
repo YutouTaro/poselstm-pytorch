@@ -10,6 +10,7 @@ from .base_model import BaseModel
 from . import networks
 import pickle
 import numpy
+from .networks import FCN16s
 
 class FCNLSTModel(BaseModel):
     def name(self):
@@ -29,11 +30,19 @@ class FCNLSTModel(BaseModel):
             googlenet_file = open(opt.init_weights, "rb")
             googlenet_weights = pickle.load(googlenet_file, encoding="bytes")
             googlenet_file.close()
-            print('initializing the weights from '+ opt.init_weights)
+
+            fcn16s_weights = FCN16s()
+            state_dict = torch.load(opt.pretrained_model)
+            try:
+                fcn16s_weights.load_state_dict(state_dict)
+            except RuntimeError:
+                fcn16s_weights.load_state_dict(state_dict['model_state_dict'])
+
+            print('initializing the weights from '+ opt.init_weights + 'and ' + opt.pretrained_model)
         self.mean_image = np.load(os.path.join(opt.dataroot , 'mean_image.npy'))
 
         self.netG = networks.define_network(opt.input_nc, opt.lstm_hidden_size, opt.model,
-                                      init_from=googlenet_weights, isTest=not self.isTrain,
+                                      init_from=(googlenet_weights,fcn16s_weights), isTest=not self.isTrain,
                                       gpu_ids = self.gpu_ids)
 
         if not self.isTrain or opt.continue_train:
