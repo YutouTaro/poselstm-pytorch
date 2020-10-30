@@ -498,7 +498,6 @@ class FCNLSTM(nn.Module):
                         # print(' and bias', end='')
                 # print()
             else:
-                print("[debug]{}, {}".format(name, type(l2)))
                 if isinstance(l2, torch.nn.Conv2d) or isinstance(l2, torch.nn.ConvTranspose2d):
                     for para_name, param in l2.named_parameters():
                         if 'bias' in para_name:
