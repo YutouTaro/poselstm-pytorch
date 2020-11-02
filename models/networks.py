@@ -164,7 +164,8 @@ class RegressionHead_FCN(nn.Module):
             self.projection = nn.AvgPool2d(kernel_size=7, stride=1)
             self.cls_fc_pose = nn.Sequential(*[
                                               #  weight_init_googlenet("pose", nn.Linear(1024, 2048)),
-                                               weight_init_googlenet("pose", nn.Linear(27216, 2048)),
+                                              #  weight_init_googlenet("pose", nn.Linear(27216, 2048)),
+                                               weight_init_googlenet("pose", nn.Linear(8400, 2048)),
                                                nn.ReLU(inplace=True)])
             self.cls_fc_xy = weight_init_googlenet("XYZ", nn.Linear(nc_cls[1], 3))
             self.cls_fc_wpqr = weight_init_googlenet("WPQR", nn.Linear(nc_cls[1], 4))
