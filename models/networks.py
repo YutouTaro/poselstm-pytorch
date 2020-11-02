@@ -141,7 +141,8 @@ class RegressionHead_FCN(nn.Module):
         self.has_lstm = lstm_hidden_size != None
         dropout_rate = 0.5 if lossID == "loss3" else 0.7
         nc_loss = {"loss1/conv": 512, "inception_3b/1x1": 256} # {"loss1": 512, "loss2": 528}
-        num_fc_features = {"inception_3b/1x1": 41472, "loss1/conv": 10368} # {"loss1": 46208, "loss2": 10368}
+        num_fc_features = {"inception_3b/1x1": 21632, "loss1/conv": 4608}
+        # num_fc_features = {"inception_3b/1x1": 41472, "loss1/conv": 10368}
         nc_cls = [1024, 2048] if lstm_hidden_size is None else [lstm_hidden_size*4, lstm_hidden_size*4]
         # key = {"loss1": "inception_3b/1x1", "loss2": "loss2/conv"}
         self.dropout = nn.Dropout(p=dropout_rate)
