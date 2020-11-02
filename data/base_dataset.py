@@ -72,8 +72,8 @@ def __crop_image(img, size, isTrain):
     if isTrain:
         if w == size and h == size:
             return img
-        x = numpy.random.randint(0, w - size)
-        y = numpy.random.randint(0, h - size)
+        x = 0 if w == size else numpy.random.randint(0, w - size)
+        y = 0 if h == size else numpy.random.randint(0, h - size)
     else:
         x = int(round((w - size) / 2.))
         y = int(round((h - size) / 2.))
