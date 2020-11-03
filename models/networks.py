@@ -455,15 +455,15 @@ class FCNLSTM(nn.Module):
         self.drop7 = nn.Dropout2d()
 
         self.score_fr = nn.Conv2d(4096, self.n_class, 1)
-        self.score_pool3 = nn.Conv2d(256, self.n_class, 1)
-        self.score_pool4 = nn.Conv2d(512, self.n_class, 1)
-
         self.upscore2 = nn.ConvTranspose2d(
             self.n_class, self.n_class, 4, stride=2, bias=False)
-        self.upscore8 = nn.ConvTranspose2d(
-            self.n_class, self.n_class, 16, stride=8, bias=False)
         self.upscore_pool4 = nn.ConvTranspose2d(
             self.n_class, self.n_class, 4, stride=2, bias=False)
+
+        self.score_pool3 = nn.Conv2d(256, self.n_class, 1)
+        self.score_pool4 = nn.Conv2d(512, self.n_class, 1)
+        # self.upscore8 = nn.ConvTranspose2d(
+        #     self.n_class, self.n_class, 16, stride=8, bias=False)
 
         self.cls1_fc = RegressionHead_FCN(lossID="inception_3b/1x1", weights=weights, lstm_hidden_size=lstm_hidden_size)
         self.cls2_fc = RegressionHead_FCN(lossID="loss1/conv", weights=weights, lstm_hidden_size=lstm_hidden_size)
@@ -510,52 +510,52 @@ class FCNLSTM(nn.Module):
     def forward(self, x):
         output1_1 = self.relu1_1(self.conv1_1(x))
         output1_2 = self.relu1_2(self.conv1_2(output1_1))
-        pool1 = self.pool1(output1_2)
+        p1 = self.pool1(output1_2)
 
-        output2_1 = self.relu2_1(self.conv2_1(pool1))
+        output2_1 = self.relu2_1(self.conv2_1(p1))
         output2_2 = self.relu2_2(self.conv2_2(output2_1))
-        pool2 = self.pool2(output2_1)
+        p2 = self.pool2(output2_1)
 
-        output3_1 = self.relu3_1(self.conv3_1(pool2))
+        output3_1 = self.relu3_1(self.conv3_1(p2))
         output3_2 = self.relu3_2(self.conv3_2(output3_1))
         output3_3 = self.relu3_3(self.conv3_3(output3_2))
-        pool3 = self.pool3(output3_1)  # 1/8
+        p3 = self.pool3(output3_1)  # 1/8
 
-        output4_1 = self.relu4_1(self.conv4_1(pool3))
+        output4_1 = self.relu4_1(self.conv4_1(p3))
         output4_2 = self.relu4_2(self.conv4_2(output4_1))
         output4_3 = self.relu4_3(self.conv4_3(output4_2))
-        pool4 = self.pool4(output4_3)  # 1/16
+        p4 = self.pool4(output4_3)  # 1/16
 
-        output5_1 = self.relu5_1(self.conv5_1(pool4))
+        output5_1 = self.relu5_1(self.conv5_1(p4))
         output5_2 = self.relu5_2(self.conv5_2(output5_1))
         output5_3 = self.relu5_3(self.conv5_3(output5_2))
-        pool5 = self.pool5(output5_3)
+        p5 = self.pool5(output5_3)
 
-        output6 = self.drop6(self.relu6(self.fc6(pool5)))
+        output6 = self.drop6(self.relu6(self.fc6(p5)))
 
         output7 = self.drop7(self.relu7(self.fc7(output6)))
 
-        score_fr = self.score_fr(output7)
-        upscore2 = self.upscore2(score_fr)  # 1/16
+        s_fr = self.score_fr(output7)
+        ups2 = self.upscore2(s_fr)  # 1/16
 
-        h = self.score_pool4(pool4)
-        score_pool4c = h[:, :, 5:5 + upscore2.size()[2], 5:5 + upscore2.size()[3]]  # 1/16
+        h = self.score_pool4(p4)
+        s_p4c = h[:, :, 5:5 + ups2.size()[2], 5:5 + ups2.size()[3]]  # 1/16
 
-        upscore_pool4 = self.upscore_pool4(upscore2 + score_pool4c)  # 1/8
+        ups_p4 = self.upscore_pool4(ups2 + s_p4c)  # 1/8
 
-        h = self.score_pool3(pool3)
-        score_pool3c = h[:, :,
-                       9:9 + upscore_pool4.size()[2],
-                       9:9 + upscore_pool4.size()[3]]  # 1/8
+        h = self.score_pool3(p3)
+        s_p3c = h[:, :,
+                       9:9 + ups_p4.size()[2],
+                       9:9 + ups_p4.size()[3]]  # 1/8
 
-        h = upscore_pool4 + score_pool3c
+        h = ups_p4 + s_p3c
         # h = self.upscore8(upscore_pool4 + score_pool3c)
         # h = h[:, :, 31:31 + x.size()[2], 31:31 + x.size()[3]].contiguous()
 
         if self.isTest:
             output = self.cls3_fc(h)
         else:
-            output = self.cls1_fc(pool3) + self.cls2_fc(pool4) + self.cls3_fc(h)
+            output = self.cls1_fc(p3) + self.cls2_fc(p4) + self.cls3_fc(h)
             # output = self.cls2_fc(pool4) + self.cls3_fc(h)
 
         return output
