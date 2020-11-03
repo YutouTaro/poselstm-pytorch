@@ -141,8 +141,8 @@ class RegressionHead_FCN(nn.Module):
         self.has_lstm = lstm_hidden_size != None
         dropout_rate = 0.5 if lossID == "loss3" else 0.7
         nc_loss = {"loss1/conv": 512, "inception_3b/1x1": 256} # {"loss1": 512, "loss2": 528}
-        num_fc_features = {"inception_3b/1x1": 21632, "loss1/conv": 4608}
-        # num_fc_features = {"inception_3b/1x1": 41472, "loss1/conv": 10368}
+        num_fc_features = {"inception_3b/1x1": 21632, "loss1/conv": 4608, "loss3/conv": 8400}
+        # num_fc_features = {"inception_3b/1x1": 41472, "loss1/conv": 10368, "loss3/conv": 27216}
         nc_cls = [1024, 2048] if lstm_hidden_size is None else [lstm_hidden_size*4, lstm_hidden_size*4]
         # key = {"loss1": "inception_3b/1x1", "loss2": "loss2/conv"}
         self.dropout = nn.Dropout(p=dropout_rate)
@@ -164,8 +164,7 @@ class RegressionHead_FCN(nn.Module):
             self.projection = nn.AvgPool2d(kernel_size=7, stride=1)
             self.cls_fc_pose = nn.Sequential(*[
                                               #  weight_init_googlenet("pose", nn.Linear(1024, 2048)),
-                                              #  weight_init_googlenet("pose", nn.Linear(27216, 2048)),
-                                               weight_init_googlenet("pose", nn.Linear(8400, 2048)),
+                                               weight_init_googlenet("pose", nn.Linear(num_fc_features[lossID], 2048)),
                                                nn.ReLU(inplace=True)])
             self.cls_fc_xy = weight_init_googlenet("XYZ", nn.Linear(nc_cls[1], 3))
             self.cls_fc_wpqr = weight_init_googlenet("WPQR", nn.Linear(nc_cls[1], 4))
