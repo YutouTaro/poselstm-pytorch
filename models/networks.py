@@ -61,7 +61,10 @@ def define_network(input_nc, lstm_hidden_size, model, init_from=None, isTest=Fal
     elif model == 'poselstm':
         netG = PoseLSTM(input_nc, lstm_hidden_size, weights=init_from, isTest=isTest, gpu_ids=gpu_ids)
     elif model == 'fcnlstm':
-        netG = FCNLSTM(input_nc, lstm_hidden_size, weights=init_from[0], weight_fcn=init_from[1], isTest=isTest, gpu_ids=gpu_ids)
+        if init_from == None:
+            netG = FCNLSTM(input_nc, lstm_hidden_size, isTest=isTest, gpu_ids=gpu_ids)
+        else:
+            netG = FCNLSTM(input_nc, lstm_hidden_size, weights=init_from[0], weight_fcn=init_from[1], isTest=isTest, gpu_ids=gpu_ids)
     else:
         raise NotImplementedError('Model name [%s] is not recognized' % model)
     if len(gpu_ids) > 0:

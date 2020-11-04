@@ -26,6 +26,7 @@ class FCNLSTModel(BaseModel):
 
         # load/define networks
         googlenet_weights = None
+        fcn16s_weights = None
         if self.isTrain and opt.init_weights != '':
             googlenet_file = open(opt.init_weights, "rb")
             googlenet_weights = pickle.load(googlenet_file, encoding="bytes")
