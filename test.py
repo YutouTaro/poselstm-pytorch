@@ -24,9 +24,9 @@ if not os.path.exists(results_dir):
 
 besterror  = [0, float('inf'), float('inf')] # nepoch, medX, medQ
 if opt.model == 'posenet':
-    testepochs = numpy.arange(450, 500+1, 5)
+    testepochs = numpy.arange(450, 500+1, opt.load_epoch_freq)
 else:
-	testepochs = numpy.arange(450, 500+1, 5)
+    testepochs = numpy.arange(450, 500+1, opt.load_epoch_freq)
     # testepochs = numpy.arange(450, 1200+1, 5)
 
 testfile = open(os.path.join(results_dir, 'test_median.txt'), 'a')
