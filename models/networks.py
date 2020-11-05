@@ -472,6 +472,18 @@ class FCNLSTM(nn.Module):
         self.cls2_fc = RegressionHead_FCN(lossID="loss1/conv", weights=weights, lstm_hidden_size=lstm_hidden_size)
         self.cls3_fc = RegressionHead_FCN(lossID="loss3/conv", weights=weights, lstm_hidden_size=lstm_hidden_size)
 
+        self.model = nn.Sequential(*[
+            self.conv1_1, self.relu1_1, self.conv1_2, self.relu1_2, self.pool1,
+            self.conv2_1, self.relu2_1, self.conv2_2, self.relu2_2, self.pool2,
+            self.conv3_1, self.relu3_1, self.conv3_2, self.relu3_2, self.conv3_3, self.relu3_3, self.pool3,
+            self.conv4_1, self.relu4_1, self.conv4_2, self.relu4_2, self.conv4_3, self.relu4_3, self.pool4,
+            self.conv5_1, self.relu5_1, self.conv5_2, self.relu5_2, self.conv5_3, self.relu5_3, self.pool5,
+            self.fc6, self.relu6, self.drop6, self.fc7, self.relu7, self.drop7, self.score_fr, self.upscore2,
+            self.upscore_pool4,
+            self.score_pool3, self.score_pool4,
+            self.cls1_fc, self.cls2_fc, self.cls3_fc,
+        ])
+
         if self.isTest:
             self.model.eval() # ensure Dropout is deactivated during test
         self._initialize_weights()
