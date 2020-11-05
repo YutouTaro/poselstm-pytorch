@@ -486,6 +486,8 @@ class FCNLSTM(nn.Module):
 
         if self.isTest:
             self.model.eval() # ensure Dropout is deactivated during test
+        else:
+            self.model.train()
         self._initialize_weights()
 
     def _initialize_weights(self):
@@ -553,12 +555,12 @@ class FCNLSTM(nn.Module):
         s_fr = self.score_fr(output7)
         ups2 = self.upscore2(s_fr)  # 1/16
 
-        h = self.score_pool4(p4)
+        h = self.score_pool4(p4 * 0.01)
         s_p4c = h[:, :, 5:5 + ups2.size()[2], 5:5 + ups2.size()[3]]  # 1/16
 
         ups_p4 = self.upscore_pool4(ups2 + s_p4c)  # 1/8
 
-        h = self.score_pool3(p3)
+        h = self.score_pool3(p3 * 0.0001)
         s_p3c = h[:, :,
                        9:9 + ups_p4.size()[2],
                        9:9 + ups_p4.size()[3]]  # 1/8
