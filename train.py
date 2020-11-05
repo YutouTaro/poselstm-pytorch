@@ -53,7 +53,7 @@ for epoch in range(opt.epoch_count, opt.niter + opt.niter_decay + 1):
         #           (epoch, total_steps))
         #     model.save('latest')
 
-    if epoch % opt.save_epoch_freq == 0:
+    if epoch % opt.save_epoch_freq == 0 or (epoch >= opt.niter*0.9 and epoch % int(opt.save_epoch_freq/2) == 0) :
         print('saving the model at the end of epoch %d, iters %d' %
               (epoch, total_steps))
         model.save('latest')
