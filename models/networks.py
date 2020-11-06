@@ -489,6 +489,7 @@ class FCNLSTM(nn.Module):
         else:
             self.model.train()
         self._initialize_weights()
+        del self.weight_fcn16s
 
     def _initialize_weights(self):
         # for m in self.modules():

@@ -45,6 +45,12 @@ class BaseModel():
         else:
             save_filename = '%s_net_%s.pth' % (epoch_label, network_label)
         save_path = os.path.join(self.save_dir, save_filename)
+        # weights_to_save = network.cpu().state_dict()
+        # keylist = weights_to_save.keys()
+        # for key in keylist:
+        #     if 'weight_fcn16s' in key:
+        #         del weights_to_save[key]
+        # torch.save(weights_to_save, save_path)
         torch.save(network.cpu().state_dict(), save_path)
         if len(gpu_ids) and torch.cuda.is_available():
             network.cuda(gpu_ids[0])
