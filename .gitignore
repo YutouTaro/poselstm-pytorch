@@ -23,3 +23,5 @@ docs/src/**/*
 .idea/poselstm-pytorch.iml
 .idea/vcs.xml
 .idea/workspace.xml
+model_netG_cambridge.txt
+model_netG_euroc.txt
