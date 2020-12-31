@@ -77,14 +77,14 @@ def __crop_image(img, size, isTrain):
     h, w = img.shape[0:2]
     # w, h = img.size
     if isTrain:
-        if w == size and h == size:
+        if w == size[1] and h == size[0]:
             return img
-        x = 0 if w == size else numpy.random.randint(0, w - size)
-        y = 0 if h == size else numpy.random.randint(0, h - size)
+        x = 0 if w == size[1] else numpy.random.randint(0, w - size[1])
+        y = 0 if h == size[0] else numpy.random.randint(0, h - size[0])
     else:
-        x = int(round((w - size) / 2.))
-        y = int(round((h - size) / 2.))
-    return img[y:y+size, x:x+size, :]
+        x = int(round((w - size[1]) / 2.))
+        y = int(round((h - size[0]) / 2.))
+    return img[y:y+size[0], x:x+size[1], :]
     # return img.crop((x, y, x + size, y + size))
 
 def __to_tensor(img):
