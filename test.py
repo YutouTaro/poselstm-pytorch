@@ -23,11 +23,18 @@ if not os.path.exists(results_dir):
     print("Results directory %s created." % results_dir)
 
 besterror  = [0, float('inf'), float('inf')] # nepoch, medX, medQ
-if opt.model == 'posenet':
-    testepochs = numpy.arange(450, 500+1, opt.load_epoch_freq)
+
+if opt.which_epoch.isnumeric():
+    epoch_start = int(opt.which_epoch)
+    assert epoch_start > 0 and epoch_start <= 500
+    if opt.model == 'posenet':
+        testepochs = numpy.arange(epoch_start, 500+1, opt.load_epoch_freq)
+    else:
+        testepochs = numpy.arange(epoch_start, 500+1, opt.load_epoch_freq)
+        # testepochs = numpy.arange(450, 1200+1, 5)
 else:
-    testepochs = numpy.arange(450, 500+1, opt.load_epoch_freq)
-    # testepochs = numpy.arange(450, 1200+1, 5)
+    print('Non numeric input detected for --which_epoch, test the latest only')
+    testepochs = ['latest']
 
 testfile = open(os.path.join(results_dir, 'test_median.txt'), 'a')
 testfile.write(datetime.datetime.now().strftime("%y%m%d-%H%M%S\n"))
