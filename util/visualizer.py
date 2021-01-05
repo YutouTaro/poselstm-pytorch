@@ -26,9 +26,13 @@ class Visualizer():
             util.mkdirs([self.web_dir, self.img_dir])
         if opt.isTrain:
             self.log_name = os.path.join(opt.checkpoints_dir, opt.name, 'loss_log.txt')
-            with open(self.log_name, "w") as log_file:
-                now = time.strftime("%c")
-                log_file.write('================ Training Loss (%s) ================\n' % now)
+            now = time.strftime("%c")
+            if opt.continue_train:
+                with open(self.log_name, "a") as log_file:
+                    log_file.write('================ Training resumed (%s) ================\n' % now)
+            else:
+                with open(self.log_name, "w") as log_file:
+                    log_file.write('================ Training Loss (%s) ================\n' % now)
         else:
             self.log_name = os.path.join(opt.results_dir, opt.name, '%s_%s.txt' % (opt.phase, opt.which_epoch))
             with open(self.log_name, "w") as log_file:
