@@ -25,3 +25,4 @@ docs/src/**/*
 .idea/workspace.xml
 model_netG_cambridge.txt
 model_netG_euroc.txt
+venv/Lib/site-packages/_distutils_hack/__init__.py
