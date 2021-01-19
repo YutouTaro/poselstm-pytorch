@@ -19,8 +19,12 @@ class PoseLSTModel(BaseModel):
         BaseModel.initialize(self, opt)
         self.isTrain = opt.isTrain
         # define tensors
-        self.input_A = self.Tensor(opt.batchSize, opt.input_nc,
-                                   opt.fineSize, opt.fineSize)
+        if len(opt.fineSize) == 1:
+            self.input_A = self.Tensor(opt.batchSize, opt.input_nc,
+                                       opt.fineSize[0], opt.fineSize[0])
+        else:
+            self.input_A = self.Tensor(opt.batchSize, opt.input_nc,
+                                       opt.fineSize[0], opt.fineSize[1])
         self.input_B = self.Tensor(opt.batchSize, opt.output_nc)
 
         # load/define networks
