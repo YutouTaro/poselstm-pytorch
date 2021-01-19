@@ -7,6 +7,7 @@ from util.visualizer import Visualizer
 from util import html
 import numpy
 import datetime
+from tqdm.notebook import tqdm
 
 opt = TestOptions().parse()
 opt.nThreads = 1   # test code only supports nThreads = 1
@@ -44,7 +45,7 @@ testfile.write('==================\n')
 model = create_model(opt)
 visualizer = Visualizer(opt)
 
-for testepoch in testepochs:
+for testepoch in tqdm(testepochs):
     model.load_network(model.netG, 'G', testepoch)
     visualizer.change_log_path(testepoch)
     # test
@@ -52,7 +53,7 @@ for testepoch in testepochs:
     # err_ori = []
     err = []
     print("epoch: "+ str(testepoch))
-    for i, data in enumerate(dataset):
+    for i, data in tqdm(enumerate(dataset)):
         # data includes:
         # (tensor)      'A': the image
         # (tensor)      'B': pose

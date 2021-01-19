@@ -3,6 +3,7 @@ from options.train_options import TrainOptions
 from data.data_loader import CreateDataLoader
 from models.models import create_model
 from util.visualizer import Visualizer
+from tqdm.notebook import tqdm
 
 opt = TrainOptions().parse()
 ## SEEDING
@@ -25,11 +26,11 @@ model = create_model(opt)
 visualizer = Visualizer(opt)
 total_steps = 0
 
-for epoch in range(opt.epoch_count, opt.niter + opt.niter_decay + 1):
+for epoch in tqdm(range(opt.epoch_count, opt.niter + opt.niter_decay + 1)):
     epoch_start_time = time.time()
     epoch_iter = 0
 
-    for i, data in enumerate(dataset):
+    for i, data in tqdm(enumerate(dataset)):
         iter_start_time = time.time()
         visualizer.reset()
         total_steps += opt.batchSize
