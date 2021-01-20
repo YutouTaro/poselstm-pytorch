@@ -57,8 +57,8 @@ for epoch in tqdm(range(opt.epoch_count, opt.niter + opt.niter_decay + 1)):
     if epoch % opt.save_epoch_freq == 0 or (epoch >= opt.niter*0.9 and epoch % int(opt.save_epoch_freq/2) == 0) :
         print('saving the model at the end of epoch %d, iters %d' %
               (epoch, total_steps))
-        model.save('latest')
         model.save(epoch)
+    model.save('latest')
 
     print('End of epoch %d / %d \t Time Taken: %d sec' %
           (epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time))
