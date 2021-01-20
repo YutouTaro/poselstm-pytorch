@@ -60,6 +60,8 @@ for epoch in tqdm(range(opt.epoch_count, opt.niter + opt.niter_decay + 1)):
         model.save(epoch)
     model.save('latest')
 
-    print('End of epoch %d / %d \t Time Taken: %d sec' %
-          (epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time))
+    msg_endOfEpoch = 'End of epoch %d / %d \t Time Taken: %d sec' % (epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time)
+    print(msg_endOfEpoch)
+    with open(visualizer.log_name, "a") as log_file:
+        log_file.write('%s\n' % msg_endOfEpoch)
     model.update_learning_rate()
