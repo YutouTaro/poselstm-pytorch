@@ -54,12 +54,6 @@ for epoch in tqdm(range(opt.epoch_count, opt.niter + opt.niter_decay + 1)):
         #           (epoch, total_steps))
         #     model.save('latest')
 
-    if epoch % opt.save_epoch_freq == 0 or (epoch >= opt.niter*0.9 and epoch % int(opt.save_epoch_freq/2) == 0) :
-        print('saving the model at the end of epoch %d, iters %d' %
-              (epoch, total_steps))
-        model.save(epoch)
-    model.save('latest')
-
     errors = model.get_current_errors()
     t = (time.time() - iter_start_time) / opt.batchSize
     visualizer.print_current_errors(epoch, epoch_iter, errors, t)
@@ -68,3 +62,9 @@ for epoch in tqdm(range(opt.epoch_count, opt.niter + opt.niter_decay + 1)):
     with open(visualizer.log_name, "a") as log_file:
         log_file.write('%s\n' % msg_endOfEpoch)
     model.update_learning_rate()
+
+    if epoch % opt.save_epoch_freq == 0 or (epoch >= opt.niter*0.9 and epoch % int(opt.save_epoch_freq/2) == 0) :
+        print('saving the model at the end of epoch %d, iters %d' %
+              (epoch, total_steps))
+        model.save(epoch)
+    model.save('latest')
