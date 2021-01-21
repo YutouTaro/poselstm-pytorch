@@ -3,7 +3,8 @@ from options.train_options import TrainOptions
 from data.data_loader import CreateDataLoader
 from models.models import create_model
 from util.visualizer import Visualizer
-from tqdm.notebook import tqdm
+# from tqdm.notebook import tqdm
+from tqdm import *
 
 opt = TrainOptions().parse()
 ## SEEDING
