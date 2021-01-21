@@ -33,7 +33,7 @@ for epoch in tqdm(range(opt.epoch_count, opt.niter + opt.niter_decay + 1)):
     epoch_iter = 0
     display_count = 0
 
-    for i, data in tqdm(enumerate(dataset)):
+    for i, data in enumerate(dataset):
         iter_start_time = time.time()
         visualizer.reset()
         total_steps += opt.batchSize
