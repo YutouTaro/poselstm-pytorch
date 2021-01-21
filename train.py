@@ -60,6 +60,9 @@ for epoch in tqdm(range(opt.epoch_count, opt.niter + opt.niter_decay + 1)):
         model.save(epoch)
     model.save('latest')
 
+    errors = model.get_current_errors()
+    t = (time.time() - iter_start_time) / opt.batchSize
+    visualizer.print_current_errors(epoch, epoch_iter, errors, t)
     msg_endOfEpoch = 'End of epoch %d / %d \t Time Taken: %d sec' % (epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time)
     print(msg_endOfEpoch)
     with open(visualizer.log_name, "a") as log_file:
