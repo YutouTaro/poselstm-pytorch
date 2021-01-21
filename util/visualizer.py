@@ -1,7 +1,9 @@
 import numpy as np
 import os
 import ntpath
-import time
+# import time
+from datetime import datetime
+import pytz
 from . import util
 from . import html
 
@@ -26,13 +28,17 @@ class Visualizer():
             util.mkdirs([self.web_dir, self.img_dir])
         if opt.isTrain:
             self.log_name = os.path.join(opt.checkpoints_dir, opt.name, 'loss_log.txt')
-            now = time.strftime("%c")
+            # now = time.strftime("%c")
+            timenow = datetime.now(pytz.timezone('Asia/Singapore'))
+            now = timenow.strftime('%Y-%m-%d %H:%M:%S')
             if opt.continue_train:
                 with open(self.log_name, "a") as log_file:
-                    log_file.write('================ Training resumed (%s) ================\n' % now)
+                    # log_file.write('================ Training resumed (%s) ================\n' % now)
+                    log_file.write(' Training resumed ({}) '.format(now).center(80, '=') + '\n')
             else:
                 with open(self.log_name, "w") as log_file:
-                    log_file.write('================ Training Loss (%s) ================\n' % now)
+                    # log_file.write('================ Training Loss (%s) ================\n' % now)
+                    log_file.write(' Training Loss ({}) '.format(now).center(80, '=') + '\n')
         else:
             self.log_name = os.path.join(opt.results_dir, opt.name, '%s_%s.txt' % (opt.phase, opt.which_epoch))
             with open(self.log_name, "w") as log_file:
