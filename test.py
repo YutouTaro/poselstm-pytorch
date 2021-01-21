@@ -53,7 +53,7 @@ for testepoch in tqdm(testepochs):
     # err_ori = []
     err = []
     print("epoch: "+ str(testepoch))
-    for i, data in tqdm(enumerate(dataset)):
+    for i, data in enumerate(dataset):
         # data includes:
         # (tensor)      'A': the image
         # (tensor)      'B': pose
