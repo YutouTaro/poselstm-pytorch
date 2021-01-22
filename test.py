@@ -61,8 +61,14 @@ for testepoch in tqdm(testepochs):
         model.set_input(data)
         model.test()
         img_path = model.get_image_paths()[0]
-        # print('\t%04d/%04d: processing image %s' % (i+1, len(dataset), img_path))
-        print('\t%04d/%04d: processing image %s' % (i+1, len(dataset), img_path), end='\r')
+        if "\\" in img_path:
+            imgname = img_path.split("\\")[-1]
+        elif '/' in img_path:
+            imgname = img_path.split('/')[-1]
+        else:
+            imgname = img_path
+        print('\t{:04d}/{:04d}: processing image {}'.format(i + 1, len(dataset), imgname))
+        # print('\t%04d/%04d: processing image %s' % (i+1, len(dataset), img_path), end='\r')
         image_path = img_path.split('/')[-2] + '/' + img_path.split('/')[-1]
         pose = model.get_current_pose()
         visualizer.save_estimated_pose(image_path, pose)
