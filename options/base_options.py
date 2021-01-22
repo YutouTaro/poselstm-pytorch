@@ -48,7 +48,7 @@ class BaseOptions():
             if id >= 0:
                 self.opt.gpu_ids.append(id)
 
-        if self.opt.print_freq < 0 or self.opt.print_freq > 100:
+        if self.opt.isTrain and (self.opt.print_freq < 0 or self.opt.print_freq > 100):
             self.opt.print_freq = 10
             print('print_freq out of range, reset to 10.')
 
