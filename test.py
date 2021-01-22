@@ -53,7 +53,7 @@ for testepoch in tqdm(testepochs):
     # err_ori = []
     err = []
     print("epoch: "+ str(testepoch))
-    for i, data in enumerate(dataset):
+    for i, data in tqdm(enumerate(dataset)):
         # data includes:
         # (tensor)      'A': the image
         # (tensor)      'B': pose
@@ -61,6 +61,7 @@ for testepoch in tqdm(testepochs):
         model.set_input(data)
         model.test()
         img_path = model.get_image_paths()[0]
+        # print('\t%04d/%04d: processing image %s' % (i+1, len(dataset), img_path))
         print('\t%04d/%04d: processing image %s' % (i+1, len(dataset), img_path), end='\r')
         image_path = img_path.split('/')[-2] + '/' + img_path.split('/')[-1]
         pose = model.get_current_pose()
