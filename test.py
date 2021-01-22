@@ -7,7 +7,7 @@ from util.visualizer import Visualizer
 from util import html
 import numpy
 import datetime
-from tqdm.notebook import tqdm
+from tqdm import *
 
 opt = TestOptions().parse()
 opt.nThreads = 1   # test code only supports nThreads = 1
