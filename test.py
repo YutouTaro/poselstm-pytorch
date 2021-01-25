@@ -7,6 +7,7 @@ from util.visualizer import Visualizer
 from util import html
 import numpy
 import datetime
+import pytz
 from tqdm import *
 
 opt = TestOptions().parse()
@@ -38,7 +39,7 @@ else:
     testepochs = ['latest']
 
 testfile = open(os.path.join(results_dir, 'test_median.txt'), 'a')
-testfile.write(datetime.datetime.now().strftime("%y%m%d-%H%M%S\n"))
+testfile.write(datetime.datetime.now(pytz.timezone('Asia/Singapore')).strftime("%y%m%d-%H%M%S\n"))
 testfile.write('epoch\tmedX\tmedQ\n')
 testfile.write('==================\n')
 
