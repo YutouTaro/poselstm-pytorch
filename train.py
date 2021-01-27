@@ -25,7 +25,7 @@ print('#training images = %d' % dataset_size)
 iter_size = int(dataset_size * opt.print_freq / 100) # for displaying in console and record logs
 
 model = create_model(opt)
-print("position_range = {}".format(opt.position_range))
+# print("position_range = {}".format(opt.position_range))
 visualizer = Visualizer(opt)
 total_steps = 0
 
