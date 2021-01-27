@@ -32,7 +32,7 @@ class BaseOptions():
         self.parser.add_argument('--no_flip', action='store_true', default=True, help='if specified, do not flip the images for data augmentation')
         self.parser.add_argument('--seed', type=int, default=0, help='initial random seed for deterministic results')
         self.parser.add_argument('--beta', type=float, default=500, help='beta factor used in posenet.')
-
+        self.parser.add_argument('--scale_range', nargs=2, type=float, default=(-1,1), help='the range to scale the position values')
         self.initialized = True
 
     def parse(self):
@@ -55,6 +55,8 @@ class BaseOptions():
         # set gpu ids
         if len(self.opt.gpu_ids) > 0:
             torch.cuda.set_device(self.opt.gpu_ids[0])
+
+        self.opt.scale_range = tuple(self.opt.scale_range)
 
         args = vars(self.opt)
 

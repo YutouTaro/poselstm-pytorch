@@ -71,3 +71,26 @@ def mkdirs(paths):
 def mkdir(path):
     if not os.path.exists(path):
         os.makedirs(path)
+
+def scale(data, scale_range):
+  # check scale_range is valid
+  assert len(scale_range) == 2, 'scale_range should have 2 values, {} value(s) found'.format(len(scale_range))
+  scale_min, scale_max = np.min(scale_range), np.max(scale_range)
+  assert not scale_max == scale_min, 'scale_range upper & lower boundary having equal value'
+
+  val_min, val_max = np.min(data), np.max(data)
+
+  data_scale = (data - val_min) / (val_max - val_min) * (scale_max - scale_min) + scale_min
+  return data_scale, (val_min, val_max)
+
+def inverse_scale(data_scale, val_range, scale_range):
+  assert len(scale_range) == 2, 'scale_range should have 2 values, {} value(s) found'.format(len(scale_range))
+  scale_min, scale_max = np.min(scale_range), np.max(scale_range)
+  assert not scale_max == scale_min, 'scale_range upper & lower boundary having equal value {}'.format(scale_min)
+
+  assert len(val_range) == 2, 'val_range should have 2 values, {} value(s) found'.format(len(val_range))
+  val_min, val_max = np.min(val_range), np.max(val_range)
+  assert not val_max == val_min, 'val_range upper & lower boundary having equal value {}'.format(val_min)
+
+  data = (data_scale - scale_min) / (scale_max - scale_min) * (val_max - val_min) + val_min
+  return data
