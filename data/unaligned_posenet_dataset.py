@@ -18,7 +18,7 @@ class UnalignedPoseNetDataset(BaseDataset):
         self.A_paths = [os.path.join(self.root, path) for path in self.A_paths]
         self.A_poses = numpy.loadtxt(split_file, dtype=float, delimiter=' ', skiprows=3, usecols=(1,2,3,4,5,6,7))
         # scale values of location to defined range
-        self.A_poses[:, :3], position_range = scale(self.A_poses[:, :3], self.opt.scale_range)
+        self.A_poses[:, :3], opt.position_range = scale(self.A_poses[:, :3], self.opt.scale_range)
 
         if opt.model == "poselstm":
             self.mean_image = None
