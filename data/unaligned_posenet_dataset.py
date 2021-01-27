@@ -19,6 +19,11 @@ class UnalignedPoseNetDataset(BaseDataset):
         self.A_poses = numpy.loadtxt(split_file, dtype=float, delimiter=' ', skiprows=3, usecols=(1,2,3,4,5,6,7))
         # scale values of location to defined range
         self.A_poses[:, :3], opt.position_range = scale(self.A_poses[:, :3], self.opt.scale_range)
+        # TODO find a better way to store position_range
+        file_name = os.path.join(self.opt.checkpoints_dir, self.opt.name, 'opt_'+self.opt.phase+'.txt')
+        with open(file_name, 'at') as opt_file:
+            opt_file.write('position_range: {}\n',format(opt.position_range))
+
 
         if opt.model == "poselstm":
             self.mean_image = None
