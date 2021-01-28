@@ -103,7 +103,9 @@ class PoseNetModel(BaseModel):
                                 ('ori_err', self.loss_ori),
                                 ])
 
-        pos_err = torch.dist(self.pred_B[0], self.input_B[:, 0:3])
+        pos_err = torch.dist(
+            util.inverse_scale(self.pred_B[0], self.opt.positin_range, self.opt.scale_range),
+            self.input_B[:, 0:3])
         ori_gt = F.normalize(self.input_B[:, 3:], p=2, dim=1)
         abs_distance = torch.abs((ori_gt.mul(self.pred_B[1])).sum())
         ori_err = 2*180/numpy.pi* torch.acos(abs_distance)

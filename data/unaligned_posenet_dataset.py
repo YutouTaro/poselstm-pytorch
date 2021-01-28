@@ -23,16 +23,15 @@ class UnalignedPoseNetDataset(BaseDataset):
             # TODO find a better way to store position_range
             file_name = os.path.join(self.opt.checkpoints_dir, self.opt.name, 'opt_'+self.opt.phase+'.txt')
             with open(file_name, 'at') as opt_file:
-                opt_file.write('position_range: {}, {}\n',format(opt.position_range))
-        # else:
-        #     read the position_range used for training from opt_train.txt
-        #     path_train_file = os.path.join(opt.checkpoints_dir, opt.name, 'opt_train.txt')
-        #     with open(path_train_file, 'rt') as ftrain:
-        #         for line in ftrain:
-        #             l = line.split(':')
-                    # if 'position_range' == l[0]:
-
-
+                opt_file.write('position_range: {}\n'.format(opt.position_range[0], opt.position_range[1]))
+        else:
+            # read the position_range used for training from opt_train.txt
+            path_train_file = os.path.join(opt.checkpoints_dir, opt.name, 'opt_train.txt')
+            with open(path_train_file, 'rt') as ftrain:
+                for line in ftrain:
+                    l = line.split(':')
+                    if 'position_range' == l[0]:
+                        opt.position_range = tuple(map(float, l[1].split(',')))
 
         if opt.model == "poselstm":
             self.mean_image = None
