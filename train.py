@@ -34,6 +34,7 @@ for epoch in tqdm(range(opt.epoch_count, opt.niter + 1)):
     epoch_iter = 0
     display_count = 0
 
+    print()
     for i, data in enumerate(dataset):
         iter_start_time = time.time()
         visualizer.reset()
