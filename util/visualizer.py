@@ -132,6 +132,8 @@ class Visualizer():
         message = '(epoch: %d, iters: %d, time: %.3f) ' % (epoch, i, t)
         for k, v in errors.items():
             message += '%s: %.3f ' % (k, v)
+            if k == 'pos_err':
+                message += '({:.3f}) '.format(util.inverse_scale(v, val_range=self.opt.position_range, scale_range=self.opt.scale_range))
 
         print(message)
         with open(self.log_name, "a") as log_file:
