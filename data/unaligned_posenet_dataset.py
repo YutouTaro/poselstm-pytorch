@@ -17,12 +17,21 @@ class UnalignedPoseNetDataset(BaseDataset):
         self.A_paths = numpy.loadtxt(split_file, dtype=str, delimiter=' ', skiprows=3, usecols=(0))
         self.A_paths = [os.path.join(self.root, path) for path in self.A_paths]
         self.A_poses = numpy.loadtxt(split_file, dtype=float, delimiter=' ', skiprows=3, usecols=(1,2,3,4,5,6,7))
-        # scale values of location to defined range
-        self.A_poses[:, :3], opt.position_range = scale(self.A_poses[:, :3], self.opt.scale_range)
-        # TODO find a better way to store position_range
-        file_name = os.path.join(self.opt.checkpoints_dir, self.opt.name, 'opt_'+self.opt.phase+'.txt')
-        with open(file_name, 'at') as opt_file:
-            opt_file.write('position_range: {}\n',format(opt.position_range))
+        if opt.isTrain:
+            # scale values of location to defined range
+            self.A_poses[:, :3], opt.position_range = scale(self.A_poses[:, :3], self.opt.scale_range)
+            # TODO find a better way to store position_range
+            file_name = os.path.join(self.opt.checkpoints_dir, self.opt.name, 'opt_'+self.opt.phase+'.txt')
+            with open(file_name, 'at') as opt_file:
+                opt_file.write('position_range: {}, {}\n',format(opt.position_range))
+        # else:
+        #     read the position_range used for training from opt_train.txt
+        #     path_train_file = os.path.join(opt.checkpoints_dir, opt.name, 'opt_train.txt')
+        #     with open(path_train_file, 'rt') as ftrain:
+        #         for line in ftrain:
+        #             l = line.split(':')
+                    # if 'position_range' == l[0]:
+
 
 
         if opt.model == "poselstm":
