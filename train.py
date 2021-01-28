@@ -29,7 +29,7 @@ model = create_model(opt)
 visualizer = Visualizer(opt)
 total_steps = 0
 
-for epoch in tqdm(range(opt.epoch_count, opt.niter + opt.niter_decay + 1)):
+for epoch in tqdm(range(opt.epoch_count, opt.niter + 1)):
     epoch_start_time = time.time()
     epoch_iter = 0
     display_count = 0
@@ -63,7 +63,7 @@ for epoch in tqdm(range(opt.epoch_count, opt.niter + opt.niter_decay + 1)):
     errors = model.get_current_errors()
     t = (time.time() - iter_start_time) / opt.batchSize
     visualizer.print_current_errors(epoch, epoch_iter, errors, t)
-    msg_endOfEpoch = 'End of epoch %d / %d \t Time Taken: %d sec' % (epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time)
+    msg_endOfEpoch = 'End of epoch %d / %d \t Time Taken: %d sec' % (epoch, opt.niter, time.time() - epoch_start_time)
     print(msg_endOfEpoch)
     with open(visualizer.log_name, "a") as log_file:
         log_file.write('%s\n' % msg_endOfEpoch)
