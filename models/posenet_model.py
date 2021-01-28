@@ -99,7 +99,7 @@ class PoseNetModel(BaseModel):
 
     def get_current_errors(self):
         if self.opt.isTrain:
-            return OrderedDict([('pos_err', self.loss_pos),
+            return OrderedDict([('pos_err', util.inverse_scale(self.loss_pos, self.opt.positin_range, self.opt.scale_range)),
                                 ('ori_err', self.loss_ori),
                                 ])
 
