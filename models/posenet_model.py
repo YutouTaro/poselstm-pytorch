@@ -99,20 +99,22 @@ class PoseNetModel(BaseModel):
 
     def get_current_errors(self):
         if self.opt.isTrain:
-            return OrderedDict([('pos_err', util.inverse_scale(self.loss_pos, self.opt.positin_range, self.opt.scale_range)),
+            return OrderedDict([('pos_err', self.loss_pos),
                                 ('ori_err', self.loss_ori),
                                 ])
 
-        pos_err = torch.dist(
-            util.inverse_scale(self.pred_B[0], self.opt.positin_range, self.opt.scale_range),
-            self.input_B[:, 0:3])
+        pos_err = torch.dist(self.pred_B[0], self.input_B[:, 0:3])
         ori_gt = F.normalize(self.input_B[:, 3:], p=2, dim=1)
         abs_distance = torch.abs((ori_gt.mul(self.pred_B[1])).sum())
         ori_err = 2*180/numpy.pi* torch.acos(abs_distance)
         return [pos_err.item(), ori_err.item()]
 
     def get_current_pose(self):
-        return numpy.concatenate((self.pred_B[0].data[0].cpu().numpy(),
+        pos = self.pred_B[0].data[0].cpu().numpy()
+        if not self.isTrain:
+            pos = util.inverse_scale(pos, self.opt.positin_range, self.opt.scale_range)
+
+        return numpy.concatenate((pos,
                                   self.pred_B[1].data[0].cpu().numpy()))
 
     def get_current_visuals(self):
