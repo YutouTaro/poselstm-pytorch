@@ -110,11 +110,13 @@ class PoseNetModel(BaseModel):
         return [pos_err.item(), ori_err.item()]
 
     def get_current_pose(self):
-        pos = self.pred_B[0].data[0].cpu().numpy()
-        if not self.isTrain:
-            pos = util.inverse_scale(pos, self.opt.position_range, self.opt.scale_range)
-
-        return numpy.concatenate((pos,
+        # pos = self.pred_B[0].data[0].cpu().numpy()
+        # if not self.isTrain:
+        #     pos = util.inverse_scale(pos, self.opt.position_range, self.opt.scale_range)
+        #
+        # return numpy.concatenate((pos,
+        #                           self.pred_B[1].data[0].cpu().numpy()))
+        return numpy.concatenate((self.pred_B[0].data[0].cpu().numpy(),
                                   self.pred_B[1].data[0].cpu().numpy()))
 
     def get_current_visuals(self):
