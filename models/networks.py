@@ -487,8 +487,8 @@ class FCNLSTM(nn.Module):
 
         if self.isTest:
             self.model.eval() # ensure Dropout is deactivated during test
-        else:
-            self.model.train()
+        # else:
+        #     self.model.train() # no dropout needed/required, based on literature arXiv:1611.07890
         self._initialize_weights()
         del self.weight_fcn16s
 
